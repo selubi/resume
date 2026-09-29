@@ -49,6 +49,7 @@
     lang: lang,
     // Disable ligatures so ATS systems do not get confused when parsing fonts.
     ligatures: false,
+    hyphenate: false,
   )
 
   // Reccomended to have 0.5in margin on all sides
@@ -148,7 +149,7 @@
   if end-date == "" {
     start-date
   } else {
-    start-date + " " + $dash.em$ + " " + end-date
+    start-date + " - " + end-date
   }
 }
 
