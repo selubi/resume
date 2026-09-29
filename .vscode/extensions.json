@@ -6,5 +6,6 @@
     "nefrob.vscode-just-syntax",
     "jnoortheen.nix-ide",
     "redhat.vscode-yaml",
+    "mkhl.direnv",
   ]
 }
