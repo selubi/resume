@@ -15,6 +15,8 @@
 
 #let resume(
   author: "",
+  // PDF metadata title. Defaults to "<author>'s Resume".
+  title: "",
   author-position: left,
   personal-info-position: left,
   pronouns: "",
@@ -34,8 +36,10 @@
   lang: "en",
   body,
 ) = {
+  let title = if title == "" { author + "'s Resume" } else { title }
+
   // Sets document metadata
-  set document(author: author, title: author)
+  set document(author: author, title: title)
 
   // Document-wide formatting, including font and margins
   set text(
@@ -51,6 +55,11 @@
   set page(
     margin: 0.5in,
     paper: paper,
+    // Title and page number, e.g. "Gregorius Bryan's Resume        1 / 2"
+    footer: context [
+      #set text(size: 8pt, fill: luma(120))
+      #title #h(1fr) #counter(page).display("1 / 1", both: true)
+    ],
   )
 
   // Link styles

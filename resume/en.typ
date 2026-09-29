@@ -1,7 +1,10 @@
 #import "selu-cv.typ": *
 
 #show: resume.with(
+  // Your name: the big heading at the top, and the PDF's Author field
   author: "Gregorius Bryan",
+  // Title metadata for the PDF, and on the footer (defaults to "<author>'s Resume")
+  title: "Gregorius Bryan's Resume",
   location: "Tokyo, Japan",
   email: "gregorius.bryan@selubi.tech",
   github: "github.com/selubi",
@@ -75,9 +78,13 @@ Combines hands-on engineering expertise with the ability to manage complex stake
 - Extracurricular Activities: Culture Festival Preparation Committee, Projection Mapping Club
 
 == Skills
+
 - *Languages:* English (Near-Native / TOEFL iBT 108), Japanese (Near-Native / JLPT N1), Indonesian (Native)
+
 - *Systems & Infrastructure:* Linux, Bare-Metal-as-a-Service (BMaaS), End-to-End Server Management (Physical & Logical), On-premise Private Cloud.
+
 - *Platform & DevOps:* Bazel, Nix, Chef Infra, Ansible, Jenkins, GitHub Actions, Docker, Developer Tooling.
+
 - *Programming Languages:* Python, Bash, Go, Ruby, C++.
 
 == Certifications
