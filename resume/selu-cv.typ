@@ -7,7 +7,8 @@
 //
 // Deletions:
 // - Mentions of orcid, and therefore the need to import science icon pack
-//
+// - Two by two component is dropped in favor of one by two joined with linebreaks
+// - Simplifaction of section components primitives. Theres only #institution, #role, and #certification now
 
 
 #let inline-separator = "  |  "
@@ -119,18 +120,6 @@
   body
 }
 
-// Generic two by two component for resume
-#let generic-two-by-two(
-  top-left: "",
-  top-right: "",
-  bottom-left: "",
-  bottom-right: "",
-) = {
-  [
-    #top-left #h(1fr) #top-right \
-    #bottom-left #h(1fr) #bottom-right
-  ]
-}
 
 // Generic one by two component for resume
 #let generic-one-by-two(
@@ -153,6 +142,39 @@
     start-date + " " + $dash.em$ + " " + end-date
   }
 }
+
+// Section components below
+#let institution(institution: "", location: "") = {
+  generic-one-by-two(
+    left: strong(institution),
+    right: emph(location),
+  )
+}
+
+
+#let role(role: "", dates: "") = {
+  generic-one-by-two(
+    left: role,
+    right: dates,
+  )
+}
+
+
+#let certification(name: "", issuer: "", date: "") = [ *#name*, #issuer #h(1fr) #date ]
+
+// // Generic two by two component for resume
+// #let generic-two-by-two(
+//   top-left: "",
+//   top-right: "",
+//   bottom-left: "",
+//   bottom-right: "",
+// ) = {
+//   [
+//     #top-left #h(1fr) #top-right \
+//     #bottom-left #h(1fr) #bottom-right
+//   ]
+// }
+
 
 // #let institution(institution: "", location: "", dates: "") = {
 //   let left = if location != "" {
@@ -177,68 +199,3 @@
 //     right: dates,
 //   )
 // }
-
-#let institution(institution: "", location: "") = {
-  generic-one-by-two(
-    left: strong(institution),
-    right: emph(location),
-  )
-}
-
-
-#let role(role: "", dates: "") = {
-  generic-one-by-two(
-    left: role,
-    right: dates,
-  )
-}
-
-
-#let project(
-  role: "",
-  name: "",
-  url: "",
-  dates: "",
-) = {
-  generic-one-by-two(
-    left: {
-      if role == "" {
-        [*#name* #if url != "" and dates != "" [ (#link("https://" + url)[#url])]]
-      } else {
-        [*#role*, #name #if url != "" and dates != "" [ (#link("https://" + url)[#url])]]
-      }
-    },
-    right: {
-      if dates == "" and url != "" {
-        link("https://" + url)[#url]
-      } else {
-        dates
-      }
-    },
-  )
-}
-
-#let certificates(
-  name: "",
-  issuer: "",
-  url: "",
-  date: "",
-) = {
-  [
-    *#name*, #issuer
-    #if url != "" {
-      [ (#link("https://" + url)[#url])]
-    }
-    #h(1fr) #date
-  ]
-}
-
-#let extracurriculars(
-  activity: "",
-  dates: "",
-) = {
-  generic-one-by-two(
-    left: strong(activity),
-    right: dates,
-  )
-}

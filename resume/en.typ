@@ -1,18 +1,11 @@
 #import "selu-cv.typ": *
 
-#let name = "Gregorius Bryan"
-#let location = "Tokyo, Japan"
-#let email = "gregorius.bryan@selubi.tech"
-#let github = "github.com/selubi"
-#let linkedin = "linkedin.com/in/selubi"
-
-
 #show: resume.with(
-  author: name,
-  location: location,
-  email: email,
-  github: github,
-  linkedin: linkedin,
+  author: "Gregorius Bryan",
+  location: "Tokyo, Japan",
+  email: "gregorius.bryan@selubi.tech",
+  github: "github.com/selubi",
+  linkedin: "linkedin.com/in/selubi",
   lang: "en",
   accent-color: "#14213D",
 )
@@ -24,7 +17,7 @@ Trilingual (JLPT N1/990 TOEIC) Senior Platform \& Infrastructure Engineer with a
 Proven track record of resolving organizational deadlocks by decoupling software runtimes from infrastructure, unblocking global OS migrations for 4,000+ developers and managing 60,000+ server fleets.
 
 Highly proficient in Python ecosystem management at scale and infrastructure automation.
-Combines hands‑on engineering expertise with the ability to manage complex stakeholders in cross-cultural global teams.
+Combines hands-on engineering expertise with the ability to manage complex stakeholders in cross-cultural global teams.
 
 == Work Experience
 
@@ -88,8 +81,79 @@ Combines hands‑on engineering expertise with the ability to manage complex sta
 - *Programming Languages:* Python, Bash, Go, Ruby, C++.
 
 == Certifications
-#certificates(
+#certification(
+  name: "Dante Certification level 3",
+  date: "Jan 2025",
+  issuer: "Audinate",
+)
+
+#certification(
   name: "AWS Certified Solutions Architect - Associate",
   date: "Mar 2024",
   issuer: "Amazon Web Services (AWS)",
 )
+
+#certification(
+  name: "Applied Information Technology Engineer Examination",
+  date: "Dec 2022",
+  issuer: "IPA",
+)
+
+#certification(
+  name: "TOEIC L&R 990 Points (Perfect Score)",
+  date: "Nov 2021",
+  issuer: "ETS",
+)
+
+#certification(
+  name: "Fundamental Information Technology Engineer Examination",
+  date: "Mar 2021",
+  issuer: "IPA",
+)
+
+#certification(
+  name: "Japanese-Language Proficiency Test N1",
+  date: "Jan 2019",
+  issuer: "JEES",
+)
+
+#certification(
+  name: "TOEFL iBT 108 Points",
+  date: "Jan 2019",
+  issuer: "ETS",
+)
+
+== Publications
+#institution(
+  institution: "The 20th Annual Workshop of the Australasian Language Technology Association",
+  location: "Adelaide, Australia",
+)\
+#role(
+  role: "Generating Code-Switched Text from Monolingual Text with Dependency Tree",
+  dates: "Dec 2022",
+)
+
+== Honors & Awards
+#certification(
+  name: "Scholarship for Self-Supporting Students",
+  date: dates-helper(start-date: "2019", end-date: "2023"),
+  issuer: "Sato Yo International Scholarship Foundation (SISF)",
+)
+
+#certification(
+  name: "Scholarship for highest GPA in academic year",
+  date: dates-helper(start-date: "2020", end-date: "2022"),
+  issuer: "Kwansei Gakuin University",
+)
+
+#certification(
+  name: "Alumni award for highest GPA in major",
+  date: "2023",
+  issuer: "Kwansei Gakuin University",
+)
+
+== Other Experience
+- Competitive Programming (Green rank at AtCoder, in C++).
+- Dante Certified Level 3, hobbyist for audio equipment and AVoIP routing.
+- AI Program Teaching Assistant: Facilitated student on preparing development environments and understanding API architecture.
+- Mathematics Instructor for a class of international students preparing for university entrance exams (30 people).
