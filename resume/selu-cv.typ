@@ -132,43 +132,14 @@
 
 
 // Generic one by two component for resume
-#let generic-one-by-two(
-  left: "",
-  right: "",
-) = {
-  [
-    #left #h(1fr) #right
-  ]
-}
+#let generic-one-by-two(left: "", right: "") = left + h(1fr) + right
 
-// Cannot just use normal --- ligature becuase ligatures are disabled for good reasons
-#let dates-helper(
-  start-date: "",
-  end-date: "",
-) = {
-  if end-date == "" {
-    start-date
-  } else {
-    start-date + " - " + end-date
-  }
-}
+#let dates-helper(start-date: "", end-date: "") = start-date + " - " + end-date
 
 // Section components below
-#let institution(institution: "", location: "") = {
-  generic-one-by-two(
-    left: strong(institution),
-    right: emph(location),
-  )
-}
+#let institution(institution: "", location: "") = generic-one-by-two(left: strong(institution), right: emph(location))
 
-
-#let role(role: "", dates: "") = {
-  generic-one-by-two(
-    left: role,
-    right: dates,
-  )
-}
-
+#let role(role: "", dates: "") = generic-one-by-two(left: role, right: dates)
 
 #let certification(name: "", issuer: "", date: "") = [ *#name*, #issuer #h(1fr) #date ]
 

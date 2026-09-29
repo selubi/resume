@@ -40,7 +40,7 @@ Combines hands-on engineering expertise with the ability to manage complex stake
 )\
 #role(
   role: "Senior Infrastructure Engineer",
-  dates: dates-helper(start-date: "Jan 2026"),
+  dates: "Jan 2026",
 )
 - Selected for merit-based promotion to Grade A (P4 / Senior Level) following the 2025 year-end performance review in recognition of leadership in the hardware lab and decommissioning projects.
 
