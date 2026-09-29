@@ -70,7 +70,7 @@ Combines hands-on engineering expertise with the ability to manage complex stake
 )\
 #role(
   role: "Bachelor of Engineering in Computer Science and Engineering",
-  dates: dates-helper(start-date: "Apr 2019", end-date: "Jan 2023"),
+  dates: dates-helper(start-date: "Apr 2019", end-date: "Mar 2023"),
 )
 - Highest GPA in major (3.88/4.0), full curriculum completed in Japanese as a non-native speaker
 - Recipient of multiple merit-based, non-repayable scholarships covering tuition and monthly living stipend (see Honors & Awards)
