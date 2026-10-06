@@ -3,7 +3,7 @@
   "recommendations": [
     "myriad-dreamin.tinymist",
     "DavidAnson.vscode-markdownlint",
-    "nefrob.vscode-just-syntax",
+    "eshojaei.mbake-makefile-formatter",
     "jnoortheen.nix-ide",
     "redhat.vscode-yaml",
     "mkhl.direnv",

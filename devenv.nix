@@ -7,13 +7,22 @@
   packages = with pkgs; [
     git
     wrangler
-    just
-    just-lsp
+    bash
+    gnumake
+    mbake
     poppler-utils # pdftotext
+    noto-fonts-cjk-sans
+    source-sans
   ];
 
   languages = {
-    typst.enable = true;
+    typst = {
+      enable = true;
+      fontPaths = [
+        "${pkgs.noto-fonts-cjk-sans}"
+        "${pkgs.source-sans}"
+      ];
+    };
   };
 
   # See full reference at https://devenv.sh/reference/options/

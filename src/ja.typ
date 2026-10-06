@@ -1,4 +1,6 @@
-#import "selu-cv.typ": *
+// src/ja.typ
+
+#import "../lib/selu-cv.typ": *
 
 #show: resume.with(
   // Your name: the big heading at the top, and the PDF's Author field
@@ -9,13 +11,13 @@
   email: "gregorius.bryan@selubi.tech",
   github: "github.com/selubi",
   linkedin: "linkedin.com/in/selubi",
-  lang: "en",
+  lang: "ja",
   accent-color: "#14213D",
 )
 
 == Summary
 
-Trilingual (JLPT N1/990 TOEIC) Senior Platform \& Infrastructure Engineer with a track record of accelerated promotion, specializing in the architecture of developer platforms and infrastructure at massive scale.
+Trilingual (JLPT N1/990 TOEIC) Seniorテスト Platform \& Infrastructure Engineer with a track record of accelerated promotion, specializing in the architecture of developer platforms and infrastructure at massive scale.
 
 Proven track record of resolving organizational deadlocks by decoupling software runtimes from infrastructure, unblocking global OS migrations for 4,000+ developers and managing 60,000+ server fleets.
 

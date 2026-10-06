@@ -1,4 +1,4 @@
-// resume/selu-cv.typ
+// lib/selu-cv.typ
 
 // This is a custom template based on https://typst.app/universe/package/basic-resume
 
@@ -27,9 +27,12 @@
   phone: "",
   personal-site: "",
   accent-color: "#000000",
-  // Noto Sans CJK JP actually looks different for latin characters.
-  // Specifying it this way ensures the font falls back to CJK JP for japanese characters only.
-  font: ("Noto Sans", "Noto Sans CJK JP"),
+  // Noto Sans CJK JP is Adobe's Source Han Sans under Google's name.
+  // Its Latin glyphs are scaled-up Source Sans 3, not Noto Sans.
+  // https://en.wikipedia.org/wiki/Source_Han_Sans
+  // Listing Source Sans 3 first keeps Latin at its native scale, matching the English resume.
+  // Glyphs it lacks (kana, kanji, full-width punctuation) fall back to Noto Sans CJK JP.
+  font: ("Source Sans 3", "Noto Sans CJK JP"),
   paper: "a4",
   author-font-size: 20pt,
   font-size: 10pt,
@@ -129,7 +132,6 @@
 
   body
 }
-
 
 // Generic one by two component for resume
 #let generic-one-by-two(left: "", right: "") = left + h(1fr) + right
