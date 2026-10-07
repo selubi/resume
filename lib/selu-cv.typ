@@ -142,8 +142,6 @@
 // Generic one by two component for resume
 #let generic-one-by-two(left: "", right: "") = left + h(1fr) + right
 
-#let dates-helper(start-date: "", end-date: "") = start-date + " - " + end-date
-
 // Section components below
 #let institution(institution: "", location: "") = generic-one-by-two(left: strong(institution), right: emph(location))
 
