@@ -31,15 +31,22 @@ endif
 
 # Define Sources, Dependencies, and Outputs
 SRC_DIR ?= src
-BUILD_DIR ?= build
+OUT_DIR ?= out
+
+# Changing devenv.* requires reloading the environment (`direnv reload`, or re-entering `devenv shell`).
+# Building before reloading uses the stale toolchain. Run `make rebuild` to recover.
+ENV_PREREQS := Makefile devenv.nix devenv.lock devenv.yaml
 
 SRCS := $(wildcard $(SRC_DIR)/*.typ)
-PDFS := $(SRCS:$(SRC_DIR)/%.typ=$(BUILD_DIR)/%.pdf)
-DEPS := $(PDFS:%.pdf=%.d)
+COMPILE_TARGETS := $(SRCS:$(SRC_DIR)/%.typ=$(OUT_DIR)/%.pdf)
+COMPILE_DEPS := $(COMPILE_TARGETS:%.pdf=%.d)
+EXTRACT_TARGETS := $(COMPILE_TARGETS:%.pdf=%.txt)
+LINT_TARGETS := $(COMPILE_TARGETS:%.pdf=%.lint)
 
 # Typst settings
+# Fonts are pinned. In this Makefile, Typst only uses fonts from TYPST_FONT_PATHS (system and embedded fonts are ignored).
 ifeq ($(strip $(TYPST_FONT_PATHS)),)
-$(error TYPST_FONT_PATHS is empty or undefined. Typst inside this makefile will only build with fonts specified in it)
+$(error TYPST_FONT_PATHS is not set. Run inside devenv or set it explicitly)
 endif
 
 TYPST ?= typst
@@ -47,20 +54,28 @@ TYPST_REQUIRED_FONTS := "Source Sans 3" "Noto Sans CJK JP"
 TYPST_FONT_FLAGS := --font-path $(TYPST_FONT_PATHS) --ignore-system-fonts --ignore-embedded-fonts
 TYPST_COMPILE_FLAGS := --root $(REPO_ROOT) --pdf-standard ua-1 $(TYPST_FONT_FLAGS)
 
+HARPER_CLI ?= harper-cli
+HARPER_DICT ?= $(REPO_ROOT)/.harper-dictionary.txt
+
+PDFTOTEXT ?= pdftotext
+
+.DEFAULT_GOAL := build
 
 # ===== RECIPES STARTS HERE =====
-.PHONY: all
-all: $(PDFS)
 
-$(PDFS): $(BUILD_DIR)/%.pdf: $(SRC_DIR)/%.typ | $(BUILD_DIR) check-fonts
-	$(TYPST) compile $(TYPST_COMPILE_FLAGS) --deps $(BUILD_DIR)/$*.d --deps-format make $< $@
+# ==== Build
+.PHONY: build
+build: prebuild compile postbuild
 
-$(BUILD_DIR):
-	mkdir -p $@
+.PHONY: rebuild
+rebuild:
+	$(MAKE) clean
+	$(MAKE) build
 
-.PHONY: clean
-clean:
-	rm -rf $(BUILD_DIR)
+
+# ==== Prebuild
+.PHONY: prebuild
+prebuild: $(OUT_DIR) check-fonts
 
 .PHONY: check-fonts
 .SILENT: check-fonts
@@ -80,4 +95,39 @@ check-fonts:
 		exit 1
 	fi
 
--include $(DEPS)
+$(OUT_DIR):
+	mkdir -p $@
+
+
+# ==== Compile
+.PHONY: compile
+compile: $(COMPILE_TARGETS)
+
+$(COMPILE_TARGETS): $(OUT_DIR)/%.pdf: $(SRC_DIR)/%.typ $(ENV_PREREQS) | prebuild
+	$(TYPST) compile $(TYPST_COMPILE_FLAGS) --deps $(OUT_DIR)/$*.d --deps-format make $< $@
+
+-include $(COMPILE_DEPS)
+
+
+# ==== Postbuild
+.PHONY: postbuild
+postbuild: extract lint
+
+.PHONY: lint
+lint: $(LINT_TARGETS)
+
+# A .lint file exists only if linting passed. Its content doesn't matter.
+# Its existence and timestamp let make skip re-linting unchanged documents, so it's a real file, not phony.
+$(LINT_TARGETS): $(OUT_DIR)/%.lint: $(OUT_DIR)/%.txt $(HARPER_DICT) $(ENV_PREREQS)
+	$(HARPER_CLI) lint --user-dict-path $(HARPER_DICT) $< 2>&1 | tee $@
+
+.PHONY: extract
+extract: $(EXTRACT_TARGETS)
+
+$(EXTRACT_TARGETS): $(OUT_DIR)/%.txt: $(OUT_DIR)/%.pdf $(ENV_PREREQS)
+	$(PDFTOTEXT) $< $@
+
+# ==== Clean
+.PHONY: clean
+clean:
+	rm -rf $(OUT_DIR)

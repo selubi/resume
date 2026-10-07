@@ -7,5 +7,6 @@
     "jnoortheen.nix-ide",
     "redhat.vscode-yaml",
     "mkhl.direnv",
+    "elijah-potter.harper",
   ]
 }

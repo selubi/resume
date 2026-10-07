@@ -1,18 +1,28 @@
+# devenv.nix
 {
   pkgs,
   ...
 }:
 {
-
   packages = with pkgs; [
+    # Basics
     git
-    wrangler
     bash
     gnumake
+
+    # LSP
     mbake
-    poppler-utils # pdftotext
+
+    # Prebuild
     noto-fonts-cjk-sans
     source-sans
+
+    # Lint
+    poppler-utils # pdftotext
+    harper
+
+    # Deploy
+    wrangler
   ];
 
   languages = {
@@ -24,6 +34,5 @@
       ];
     };
   };
-
   # See full reference at https://devenv.sh/reference/options/
 }
