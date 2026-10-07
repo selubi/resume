@@ -9,6 +9,7 @@
   - [ ] Decide on `Python/Config` vs `Python/configuration`
   - [ ] Switch dates to numeric (`2025-01`) or full month names (also silences the `Dec`/`Jan` lint noise)
   - [ ] Add `#set text(hyphenate: false)` to the template
+  - [ ] Reconsider role title styling in the template (currently plain, no bold or italic)
 - [ ] Port old ja to new ja
   - [ ] Confirm `ja.typ` declares `lang: "ja"`
 
@@ -18,8 +19,6 @@
 - [ ] Pass en lint
   - [ ] Add `Bahasa`, `RHEL`, `B.E.` to `.harper-dictionary.txt`
   - [ ] Fix `.harper-dictionary.txt` not loading in the editor (check the Harper output channel)
-- [ ] Move check-fonts into its own script, revisit `TYPST_REQUIRED_FONTS`
-  - [ ] Keep required fonts in sync with the template's `#set text(font: ...)`
 
 ## Deploy (a headache for later)
 

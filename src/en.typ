@@ -53,7 +53,7 @@ Combines hands-on engineering expertise with the ability to manage complex stake
 )
 - Spearheaded the 0 to 1 development of an isolated hardware lab for pre-purchase benchmarking. Succeeded the project's Principal Engineer as Lead Designer and Owner, taking full responsibility for architectural evolution, procurement strategy, and automated testing.
 - Architected and implemented an end-to-end standardized server decommissioning workflow adopted as the current organizational standard. Retired 5,000+ legacy servers saving millions of yen monthly and mentored a successor to ensure long-term operational continuity.
-- Served as a co-owner of a 200k+ line Python/Config internal automation framework, leading its maintenance and continuous feature enhancement. Iteratively identified and resolved systemic bottlenecks through root-cause analysis (RCA) of complex failures, optimizing operational processes for multiple global departments.
+- Served as a co-owner of a 200k+ line Python internal automation framework, leading its maintenance and continuous feature enhancement. Iteratively identified and resolved systemic bottlenecks through root-cause analysis (RCA) of complex failures, optimizing operational processes for multiple global departments.
 
 #role(
   role: "Associate Infrastructure Engineer",

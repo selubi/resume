@@ -4,6 +4,7 @@
 
 // Additions:
 // - Ability to include promotion within the same institution by #insitution \ #role.
+// - Hyphenated compounds are never broken across lines.
 //
 // Deletions:
 // - Mentions of orcid, and therefore the need to import science icon pack
@@ -48,6 +49,7 @@
   set text(
     // LaTeX style font
     font: font,
+    fallback: false,
     size: font-size,
     lang: lang,
     // Disable ligatures so ATS systems do not get confused when parsing fonts.
@@ -65,6 +67,10 @@
       #title #h(1fr) #counter(page).display("1 / 1", both: true)
     ],
   )
+
+  // Never break lines inside hyphenated compounds (on-premises, co-owner, Bare-Metal-as-a-Service).
+  // Text extractors join line-ending hyphens as if they were soft hyphenation, corrupting the word.
+  show regex("[A-Za-z0-9]+(-[A-Za-z0-9]+)+"): box
 
   // Link styles
   show link: underline

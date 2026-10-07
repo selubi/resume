@@ -16,6 +16,12 @@ MAKEFLAGS += --warn-undefined-variables
 # Disable built-in implicit rules such as %.o: %.c, so only rules defined here apply.
 MAKEFLAGS += --no-builtin-rules
 
+# Keep building independent targets after a failure, reporting all errors in one run.
+MAKEFLAGS += --keep-going
+
+# Print each target before its recipe, with the reason it's being rebuilt.
+MAKEFLAGS += --trace
+
 # Build independent targets in parallel, one job per CPU, with each target's output kept together.
 MAKEFLAGS += --jobs=$(shell nproc)
 MAKEFLAGS += --output-sync=target
@@ -50,9 +56,7 @@ $(error TYPST_FONT_PATHS is not set. Run inside devenv or set it explicitly)
 endif
 
 TYPST ?= typst
-TYPST_REQUIRED_FONTS := "Source Sans 3" "Noto Sans CJK JP"
-TYPST_FONT_FLAGS := --font-path $(TYPST_FONT_PATHS) --ignore-system-fonts --ignore-embedded-fonts
-TYPST_COMPILE_FLAGS := --root $(REPO_ROOT) --pdf-standard ua-1 $(TYPST_FONT_FLAGS)
+TYPST_COMPILE_FLAGS := --root $(REPO_ROOT) --pdf-standard ua-1 --font-path $(TYPST_FONT_PATHS) --ignore-system-fonts --ignore-embedded-fonts
 
 HARPER_CLI ?= harper-cli
 HARPER_DICT ?= $(REPO_ROOT)/.harper-dictionary.txt
@@ -68,46 +72,26 @@ PDFTOTEXT ?= pdftotext
 build: prebuild compile postbuild
 
 .PHONY: rebuild
-rebuild:
-	$(MAKE) clean
-	$(MAKE) build
-
+rebuild: clean .WAIT build
 
 # ==== Prebuild
 .PHONY: prebuild
-prebuild: $(OUT_DIR) check-fonts
-
-.PHONY: check-fonts
-.SILENT: check-fonts
-check-fonts:
-	fonts_available=$$($(TYPST) fonts $(TYPST_FONT_FLAGS))
-	missing=0
-	for font in $(TYPST_REQUIRED_FONTS); do
-		if ! grep -qxF "$$font" <<< "$$fonts_available"; then
-			echo "error: font '$$font' not found by typst" >&2
-			missing=1
-		fi
-	done
-	if (( missing )); then
-		echo "Font paths: $(TYPST_FONT_PATHS)" >&2
-		echo "Fonts available to typst:" >&2
-		sed 's/^/  /' <<< "$$fonts_available" >&2
-		exit 1
-	fi
+prebuild: $(OUT_DIR)
 
 $(OUT_DIR):
 	mkdir -p $@
-
 
 # ==== Compile
 .PHONY: compile
 compile: $(COMPILE_TARGETS)
 
+# Fail compile when there are warnings.
+# Workaround until there's a CLI flag to treat warnings as errors. (https://github.com/typst/typst/issues/6787)
 $(COMPILE_TARGETS): $(OUT_DIR)/%.pdf: $(SRC_DIR)/%.typ $(ENV_PREREQS) | prebuild
-	$(TYPST) compile $(TYPST_COMPILE_FLAGS) --deps $(OUT_DIR)/$*.d --deps-format make $< $@
+	$(TYPST) compile $(TYPST_COMPILE_FLAGS) --deps $(OUT_DIR)/$*.d --deps-format make $< $@ 2>&1 | tee $(OUT_DIR)/$*.log
+	if grep -q '^warning:' $(OUT_DIR)/$*.log; then echo "error: warnings found while compiling $<, failing." >&2; exit 1; fi
 
 -include $(COMPILE_DEPS)
-
 
 # ==== Postbuild
 .PHONY: postbuild
