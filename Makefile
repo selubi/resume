@@ -35,19 +35,20 @@ ifeq ($(strip $(REPO_ROOT)),)
 $(error REPO_ROOT is empty or undefined and could not be determined with `git rev-parse --show-toplevel`)
 endif
 
-# Define Sources, Dependencies, and Outputs
-SRC_DIR ?= src
-OUT_DIR ?= out
-
 # Changing devenv.* requires reloading the environment (`direnv reload`, or re-entering `devenv shell`).
 # Building before reloading uses the stale toolchain. Run `make rebuild` to recover.
-ENV_PREREQS := Makefile devenv.nix devenv.lock devenv.yaml
+ENV_PREREQS := $(MAKEFILE_LIST) devenv.nix devenv.lock devenv.yaml
 
-SRCS := $(wildcard $(SRC_DIR)/*.typ)
-COMPILE_TARGETS := $(SRCS:$(SRC_DIR)/%.typ=$(OUT_DIR)/%.pdf)
-COMPILE_DEPS := $(COMPILE_TARGETS:%.pdf=%.d)
-EXTRACT_TARGETS := $(COMPILE_TARGETS:%.pdf=%.txt)
-LINT_TARGETS := $(COMPILE_TARGETS:%.pdf=%.lint)
+.DEFAULT_GOAL := build
+
+SRC_DIR ?= src
+BUILD_DIR ?= out
+
+RESUME_SRCS := $(wildcard $(SRC_DIR)/resumes/*.typ)
+RESUME_PDFS := $(RESUME_SRCS:$(SRC_DIR)/%.typ=$(BUILD_DIR)/%.pdf)
+RESUME_DEPS := $(RESUME_PDFS:%.pdf=%.d)
+RESUME_EXTRACTS := $(RESUME_PDFS:%.pdf=%.txt)
+RESUME_LINTS := $(RESUME_PDFS:%.pdf=%.lint)
 
 # Typst settings
 # Fonts are pinned. In this Makefile, Typst only uses fonts from TYPST_FONT_PATHS (system and embedded fonts are ignored).
@@ -63,55 +64,48 @@ HARPER_DICT ?= $(REPO_ROOT)/.harper-dictionary.txt
 
 PDFTOTEXT ?= pdftotext
 
-.DEFAULT_GOAL := build
-
 # ===== RECIPES STARTS HERE =====
 
 # ==== Build
 .PHONY: build
-build: prebuild compile postbuild
+build: compile extract lint
 
 .PHONY: rebuild
 rebuild: clean .WAIT build
 
-# ==== Prebuild
-.PHONY: prebuild
-prebuild: $(OUT_DIR)
-
-$(OUT_DIR):
-	mkdir -p $@
-
 # ==== Compile
 .PHONY: compile
-compile: $(COMPILE_TARGETS)
+compile: $(RESUME_PDFS)
 
 # Fail compile when there are warnings.
 # Workaround until there's a CLI flag to treat warnings as errors. (https://github.com/typst/typst/issues/6787)
-$(COMPILE_TARGETS): $(OUT_DIR)/%.pdf: $(SRC_DIR)/%.typ $(ENV_PREREQS) | prebuild
-	$(TYPST) compile $(TYPST_COMPILE_FLAGS) --deps $(OUT_DIR)/$*.d --deps-format make $< $@ 2>&1 | tee $(OUT_DIR)/$*.log
-	if grep -q '^warning:' $(OUT_DIR)/$*.log; then echo "error: warnings found while compiling $<, failing." >&2; exit 1; fi
+$(RESUME_PDFS): $(BUILD_DIR)/%.pdf: $(SRC_DIR)/%.typ $(ENV_PREREQS)
+	mkdir -p $(@D)
+	$(TYPST) compile $(TYPST_COMPILE_FLAGS) --deps $(BUILD_DIR)/$*.d --deps-format make $< $@ 2>&1 | tee $(BUILD_DIR)/$*.log
+	if grep -q '^warning:' $(BUILD_DIR)/$*.log; then echo "error: warnings found while compiling $<, failing." >&2; exit 1; fi
 
--include $(COMPILE_DEPS)
+-include $(RESUME_DEPS)
 
-# ==== Postbuild
-.PHONY: postbuild
-postbuild: extract lint
 
+# ==== Extract
+.PHONY: extract
+extract: $(RESUME_EXTRACTS)
+
+$(RESUME_EXTRACTS): $(BUILD_DIR)/%.txt: $(BUILD_DIR)/%.pdf $(ENV_PREREQS)
+	$(PDFTOTEXT) $< $@
+
+
+# ==== Lint
 .PHONY: lint
-lint: $(LINT_TARGETS)
+lint: $(RESUME_LINTS)
 
 # A .lint file exists only if linting passed. Its content doesn't matter.
 # Its existence and timestamp let make skip re-linting unchanged documents, so it's a real file, not phony.
-$(LINT_TARGETS): $(OUT_DIR)/%.lint: $(OUT_DIR)/%.txt $(HARPER_DICT) $(ENV_PREREQS)
+$(RESUME_LINTS): $(BUILD_DIR)/%.lint: $(BUILD_DIR)/%.txt $(HARPER_DICT) $(ENV_PREREQS)
 	$(HARPER_CLI) lint --user-dict-path $(HARPER_DICT) $< 2>&1 | tee $@
 
-.PHONY: extract
-extract: $(EXTRACT_TARGETS)
-
-$(EXTRACT_TARGETS): $(OUT_DIR)/%.txt: $(OUT_DIR)/%.pdf $(ENV_PREREQS)
-	$(PDFTOTEXT) $< $@
 
 # ==== Clean
 .PHONY: clean
 clean:
-	rm -rf $(OUT_DIR)
+	rm -rf $(BUILD_DIR)

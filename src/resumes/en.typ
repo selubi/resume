@@ -1,6 +1,6 @@
 // src/en.typ
 
-#import "../lib/selu-cv.typ": *
+#import "/src/lib/selu-cv.typ": *
 
 #show: resume.with(
   // Your name: the big heading at the top, and the PDF's Author field
