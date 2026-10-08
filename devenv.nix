@@ -25,6 +25,8 @@
     wrangler
   ];
 
+  files.".devenv.files/wrangler-schema.json".source = "${pkgs.wrangler}/lib/config-schema.json";
+
   languages = {
     typst = {
       enable = true;

@@ -52,6 +52,9 @@ RESUME_EXTRACTS := $(RESUME_PDFS:%.pdf=%.txt)
 RESUME_LINTS := $(RESUME_PDFS:%.pdf=%.lint)
 RESUME_DISTS := $(RESUME_PDFS:$(BUILD_DIR)/resumes/%.pdf=$(DIST_DIR)/%.pdf)
 
+STATIC_SRCS := $(wildcard $(SRC_DIR)/static/*)
+STATIC_DISTS := $(STATIC_SRCS:$(SRC_DIR)/static/%=$(DIST_DIR)/%)
+
 # Typst settings
 # Fonts are pinned. In this Makefile, Typst only uses fonts from TYPST_FONT_PATHS (system and embedded fonts are ignored).
 ifeq ($(strip $(TYPST_FONT_PATHS)),)
@@ -66,16 +69,27 @@ HARPER_DICT ?= $(REPO_ROOT)/.harper-dictionary.txt
 
 PDFTOTEXT ?= pdftotext
 
-# ===== RECIPES STARTS HERE =====
+WRANGLER ?= wrangler
 
-# ==== Build
+# ===== HIGH LEVEL TARGETS =====
 .PHONY: build
 build: compile extract lint
 
 .PHONY: rebuild
 rebuild: clean .WAIT build
 
-# ==== Compile
+.PHONY: clean
+clean:
+	rm -rf $(BUILD_DIR) $(DIST_DIR)
+
+.PHONY: deploy
+deploy: predeploy
+	$(WRANGLER) deploy
+
+.PHONY: predeploy
+predeploy: $(RESUME_DISTS) $(STATIC_DISTS)
+
+# ==== build:compile
 .PHONY: compile
 compile: $(RESUME_PDFS)
 
@@ -89,7 +103,7 @@ $(RESUME_PDFS): $(BUILD_DIR)/%.pdf: $(SRC_DIR)/%.typ $(ENV_PREREQS)
 -include $(RESUME_DEPS)
 
 
-# ==== Extract
+# ==== build:extract
 .PHONY: extract
 extract: $(RESUME_EXTRACTS)
 
@@ -97,7 +111,7 @@ $(RESUME_EXTRACTS): $(BUILD_DIR)/%.txt: $(BUILD_DIR)/%.pdf $(ENV_PREREQS)
 	$(PDFTOTEXT) $< $@
 
 
-# ==== Lint
+# ==== build:lint
 .PHONY: lint
 lint: $(RESUME_LINTS)
 
@@ -107,16 +121,12 @@ $(RESUME_LINTS): $(BUILD_DIR)/%.lint: $(BUILD_DIR)/%.txt $(HARPER_DICT) $(ENV_PR
 	$(HARPER_CLI) lint --user-dict-path $(HARPER_DICT) $< 2>&1 | tee $@
 
 
-# ==== Predeploy
-.PHONY: predeploy
-predeploy: $(RESUME_DISTS)
-
+# ==== predeploy
+# Depending on the .lint stamp means only linted PDFs can ever reach dist/
 $(RESUME_DISTS): $(DIST_DIR)/%.pdf: $(BUILD_DIR)/resumes/%.pdf $(BUILD_DIR)/resumes/%.lint
 	mkdir -p $(@D)
 	cp $< $@
 
-
-# ==== Clean
-.PHONY: clean
-clean:
-	rm -rf $(BUILD_DIR) $(DIST_DIR)
+$(STATIC_DISTS): $(DIST_DIR)/%: $(SRC_DIR)/static/%
+	mkdir -p $(@D)
+	cp $< $@
