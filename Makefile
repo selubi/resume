@@ -43,12 +43,14 @@ ENV_PREREQS := $(MAKEFILE_LIST) devenv.nix devenv.lock devenv.yaml
 
 SRC_DIR ?= src
 BUILD_DIR ?= out
+DIST_DIR ?= dist
 
 RESUME_SRCS := $(wildcard $(SRC_DIR)/resumes/*.typ)
 RESUME_PDFS := $(RESUME_SRCS:$(SRC_DIR)/%.typ=$(BUILD_DIR)/%.pdf)
 RESUME_DEPS := $(RESUME_PDFS:%.pdf=%.d)
 RESUME_EXTRACTS := $(RESUME_PDFS:%.pdf=%.txt)
 RESUME_LINTS := $(RESUME_PDFS:%.pdf=%.lint)
+RESUME_DISTS := $(RESUME_PDFS:$(BUILD_DIR)/resumes/%.pdf=$(DIST_DIR)/%.pdf)
 
 # Typst settings
 # Fonts are pinned. In this Makefile, Typst only uses fonts from TYPST_FONT_PATHS (system and embedded fonts are ignored).
@@ -105,7 +107,16 @@ $(RESUME_LINTS): $(BUILD_DIR)/%.lint: $(BUILD_DIR)/%.txt $(HARPER_DICT) $(ENV_PR
 	$(HARPER_CLI) lint --user-dict-path $(HARPER_DICT) $< 2>&1 | tee $@
 
 
+# ==== Predeploy
+.PHONY: predeploy
+predeploy: $(RESUME_DISTS)
+
+$(RESUME_DISTS): $(DIST_DIR)/%.pdf: $(BUILD_DIR)/resumes/%.pdf $(BUILD_DIR)/resumes/%.lint
+	mkdir -p $(@D)
+	cp $< $@
+
+
 # ==== Clean
 .PHONY: clean
 clean:
-	rm -rf $(BUILD_DIR)
+	rm -rf $(BUILD_DIR) $(DIST_DIR)
