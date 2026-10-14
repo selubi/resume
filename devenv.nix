@@ -9,11 +9,12 @@
     git
     bash
     gnumake
+    watchexec
 
-    # LSP
+    # Formatter
     mbake
 
-    # Prebuild
+    # Fonts
     noto-fonts-cjk-sans
     source-sans
 

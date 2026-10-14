@@ -39,11 +39,19 @@ endif
 # Building before reloading uses the stale toolchain. Run `make rebuild` to recover.
 ENV_PREREQS := $(MAKEFILE_LIST) devenv.nix devenv.lock devenv.yaml
 
-.DEFAULT_GOAL := build
+.DEFAULT_GOAL := all
 
 SRC_DIR ?= src
 BUILD_DIR ?= out
 DIST_DIR ?= dist
+
+# Tools
+TYPST ?= typst
+PDFTOTEXT ?= pdftotext
+WRANGLER ?= wrangler
+WATCH_EXEC ?= watchexec
+HARPER_CLI ?= harper-cli
+DIRENV ?= direnv
 
 RESUME_SRCS := $(wildcard $(SRC_DIR)/resumes/*.typ)
 RESUME_PDFS := $(RESUME_SRCS:$(SRC_DIR)/%.typ=$(BUILD_DIR)/%.pdf)
@@ -61,35 +69,30 @@ ifeq ($(strip $(TYPST_FONT_PATHS)),)
 $(error TYPST_FONT_PATHS is not set. Run inside devenv or set it explicitly)
 endif
 
-TYPST ?= typst
 TYPST_COMPILE_FLAGS := --root $(REPO_ROOT) --pdf-standard ua-1 --font-path $(TYPST_FONT_PATHS) --ignore-system-fonts --ignore-embedded-fonts
 
-HARPER_CLI ?= harper-cli
 HARPER_DICT ?= $(REPO_ROOT)/.harper-dictionary.txt
 
-PDFTOTEXT ?= pdftotext
-
-WRANGLER ?= wrangler
-
 # ===== HIGH LEVEL TARGETS =====
-.PHONY: build
-build: compile extract lint
+.PHONY: all
+all: compile check package
 
 .PHONY: rebuild
-rebuild: clean .WAIT build
+rebuild: clean .WAIT all
 
 .PHONY: clean
 clean:
 	rm -rf $(BUILD_DIR) $(DIST_DIR)
 
 .PHONY: deploy
-deploy: predeploy
+deploy: package
 	$(WRANGLER) deploy
 
-.PHONY: predeploy
-predeploy: $(RESUME_DISTS) $(STATIC_DISTS)
+.PHONY: watch
+watch:
+	$(WATCH_EXEC) --clear -- $(DIRENV) exec $(REPO_ROOT) $(MAKE)
 
-# ==== build:compile
+# ==== compile
 .PHONY: compile
 compile: $(RESUME_PDFS)
 
@@ -102,16 +105,18 @@ $(RESUME_PDFS): $(BUILD_DIR)/%.pdf: $(SRC_DIR)/%.typ $(ENV_PREREQS)
 
 -include $(RESUME_DEPS)
 
+# ==== check
+.PHONY: check
+check: extract lint
 
-# ==== build:extract
+# ==== check:extract
 .PHONY: extract
 extract: $(RESUME_EXTRACTS)
 
 $(RESUME_EXTRACTS): $(BUILD_DIR)/%.txt: $(BUILD_DIR)/%.pdf $(ENV_PREREQS)
 	$(PDFTOTEXT) $< $@
 
-
-# ==== build:lint
+# ==== check:lint
 .PHONY: lint
 lint: $(RESUME_LINTS)
 
@@ -120,8 +125,10 @@ lint: $(RESUME_LINTS)
 $(RESUME_LINTS): $(BUILD_DIR)/%.lint: $(BUILD_DIR)/%.txt $(HARPER_DICT) $(ENV_PREREQS)
 	$(HARPER_CLI) lint --user-dict-path $(HARPER_DICT) $< 2>&1 | tee $@
 
+# ==== package
+.PHONY: package
+package: $(RESUME_DISTS) $(STATIC_DISTS)
 
-# ==== predeploy
 # Depending on the .lint stamp means only linted PDFs can ever reach dist/
 $(RESUME_DISTS): $(DIST_DIR)/%.pdf: $(BUILD_DIR)/resumes/%.pdf $(BUILD_DIR)/resumes/%.lint
 	mkdir -p $(@D)
