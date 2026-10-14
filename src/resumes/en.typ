@@ -1,4 +1,4 @@
-// src/en.typ
+// src/resumes/en.typ
 
 #import "/src/lib/selu-cv.typ": *
 

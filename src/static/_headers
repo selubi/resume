@@ -1,0 +1,15 @@
+# src/static/_headers
+/*
+    Link: <https://resume.selubi.com/en>; rel="alternate"; hreflang="en", <https://resume.selubi.com/ja>; rel="alternate"; hreflang="ja", <https://resume.selubi.com/en>; rel="alternate"; hreflang="x-default"
+/en
+    Link: <https://resume.selubi.com/en>; rel="canonical"
+    Content-Disposition: inline; filename="gregorius_bryan_resume_en.pdf"
+/en.pdf
+    Link: <https://resume.selubi.com/en>; rel="canonical"
+    Content-Disposition: inline; filename="gregorius_bryan_resume_en.pdf"
+/ja
+    Link: <https://resume.selubi.com/ja>; rel="canonical"
+    Content-Disposition: inline; filename="gregorius_bryan_resume_ja.pdf"
+/ja.pdf
+    Link: <https://resume.selubi.com/ja>; rel="canonical"
+    Content-Disposition: inline; filename="gregorius_bryan_resume_ja.pdf"

@@ -1,5 +1,9 @@
 // .vscode/settings.json
 {
+    "files.associations": {
+        "_headers": "plaintext",
+        "_redirects": "plaintext",
+    },
     "nix.enableLanguageServer": true,
     "nix.serverPath": "nil",
     "nix.serverSettings": {

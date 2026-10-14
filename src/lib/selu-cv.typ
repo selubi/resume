@@ -1,4 +1,4 @@
-// lib/selu-cv.typ
+// src/lib/selu-cv.typ
 
 // This is a custom template based on https://typst.app/universe/package/basic-resume
 
