@@ -90,7 +90,7 @@ deploy: package
 
 .PHONY: watch
 watch:
-	$(WATCH_EXEC) --clear -- $(DIRENV) exec $(REPO_ROOT) $(MAKE)
+	$(WATCH_EXEC) --clear -- $(DIRENV) exec $(REPO_ROOT) $(MAKE) --no-print-directory
 
 # ==== compile
 .PHONY: compile
