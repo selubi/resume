@@ -1,0 +1,11 @@
+// .vscode/extensions.json
+{
+  "recommendations": [
+    "myriad-dreamin.tinymist",
+    "DavidAnson.vscode-markdownlint",
+    "eshojaei.mbake-makefile-formatter",
+    "jnoortheen.nix-ide",
+    "redhat.vscode-yaml",
+    "mkhl.direnv",
+  ]
+}

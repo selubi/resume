@@ -1,0 +1,5 @@
+# src/static/_redirects
+/    /en     302
+/en  /en.pdf 200
+/ja  /ja.pdf 200
+/jp  /ja     302

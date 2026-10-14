@@ -1,0 +1,25 @@
+# .harper-dictionary.txt
+ADAS
+Audinate
+AtCoder
+AVoIP
+Bazel
+BMaaS
+devenv
+ETS
+Gakuin
+Gregorius
+Hyogo
+iBT
+JEES
+JLPT
+Kwansei
+OS
+P4
+pdftotext
+Rakuten
+Sato
+selubi
+SISF
+TOEIC
+Trilingual

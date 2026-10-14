@@ -1,0 +1,44 @@
+# devenv.nix
+{
+  pkgs,
+  config,
+  ...
+}:
+{
+  env.REPO_ROOT = config.devenv.root;
+
+  packages = with pkgs; [
+    # Basics
+    git
+    bash
+    gnumake
+    watchexec
+
+    # Formatter
+    mbake
+
+    # Fonts
+    noto-fonts-cjk-sans
+    source-sans
+
+    # Lint
+    poppler-utils # pdftotext
+    harper
+
+    # Deploy
+    wrangler
+  ];
+
+  files.".devenv.files/wrangler-schema.json".source = "${pkgs.wrangler}/lib/config-schema.json";
+
+  languages = {
+    typst = {
+      enable = true;
+      fontPaths = [
+        "${pkgs.noto-fonts-cjk-sans}"
+        "${pkgs.source-sans}"
+      ];
+    };
+  };
+}
+# https://devenv.sh/reference/options/
