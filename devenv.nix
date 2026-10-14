@@ -1,9 +1,12 @@
 # devenv.nix
 {
   pkgs,
+  config,
   ...
 }:
 {
+  env.REPO_ROOT = config.devenv.root;
+
   packages = with pkgs; [
     # Basics
     git
